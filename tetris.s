@@ -14,6 +14,18 @@ SECTION "Header", ROM0[$100]
     ds $150 - @, 0
 
 EntryPoint:
+    ; Wait a bit before clearing the Nintendo logo and initializing
+    di
+    ld b, 0
+.wait:
+    call WaitVBlank
+    call WaitNotVBlank
+    inc b
+    ld a, b
+    cp $B4
+    jr c, .wait
+
+.init:
     call GlobalInit
 
 Main:
@@ -27,24 +39,9 @@ Main:
 
     ; Handle input
     ldh a, [hNewKeys]
-    ld c, a
-    bit PADB_LEFT, c
-    jp nz, .decreaseSpeed
-    bit PADB_RIGHT, c
-    jp nz, .increaseSpeed
-    bit PADB_A, c
+    bit PADB_A, a
     jp nz, .setColorSwap
     jp .done
-.decreaseSpeed:
-    ld a, [wFrameLimit]
-    inc a
-    ld [wFrameLimit], a
-    jr .done
-.increaseSpeed:
-    ld a, [wFrameLimit]
-    dec a
-    ld [wFrameLimit], a
-    jr .done
 .setColorSwap:
     ld a, 1
     ld [wShouldSwapColors], a

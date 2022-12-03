@@ -33,7 +33,7 @@ WaitVBlank:
 WaitNotVBlank:
     ld a, [rLY]
     cp VBLANK_START
-    jr c, WaitNotVBlank
+    jr nc, WaitNotVBlank
     ret
 
 
