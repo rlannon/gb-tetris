@@ -1,8 +1,8 @@
-; Add some standard hardware definitions
+; The main file for our program
+
 INCLUDE "hardware.inc"
 
-; If rLY register >= 144 (a - 144 >= 0 -- does not overflow) then we are in vblank
-DEF VBLANK_START EQU 144
+INCLUDE "constants.s"
 
 INCLUDE "vblank.s"
 INCLUDE "joypad.s"
@@ -15,7 +15,6 @@ SECTION "Header", ROM0[$100]
 
 EntryPoint:
     ; Wait a bit before clearing the Nintendo logo and initializing
-    di
     ld b, 0
 .wait:
     call WaitVBlank
@@ -54,7 +53,7 @@ Main:
 SECTION "Tile data", ROM0
 
 Tiles:
-    INCBIN "tetris.chr", 0, 1024
+    INCBIN "tetris.chr", 0, 2048
 TilesEnd:
 
 SECTION "Tilemap", ROM0
