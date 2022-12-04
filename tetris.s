@@ -54,6 +54,6 @@ Main:
 ; A matrix containing tetromino tile positions
 SECTION "Tetromino Map", ROM0
 
-TetrominoMap:
+TetrominoMatrix:
     INCBIN "tetrominos.bin", 0, $A0
-TetrominoMapEnd:
+TetrominoMatrixEnd:
