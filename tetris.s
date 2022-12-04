@@ -47,7 +47,6 @@ Main:
 .setColorSwap:
     ld a, 1
     ld [wShouldSwapColors], a
-    jr .done
 
     ld hl, _OAMRAM
     ld b, 0

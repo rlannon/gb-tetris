@@ -94,6 +94,7 @@ CreateTetromino:
     pop af
 
     ; Loop comparison
+    inc a
     cp 4
     jp nz, .loop
 
