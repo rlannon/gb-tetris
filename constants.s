@@ -18,4 +18,14 @@ DEF LINES_DIGITS EQU 3
 DEF SCORE_OFFSET_BEGIN EQU $10F
 DEF SCORE_DIGITS EQU 5
 
+; On-screen offsets for actual sprite X/Y values
+DEF Y_AXIS_OFFSET EQU $10
+DEF X_AXIS_OFFSET EQU $08
+
+; Base offset for tetromino tiles
+DEF TETROMINO_BASE_OFFSET EQU $25
+
+; Number of tetromino tile patterns
+DEF TETEROMINO_DESIGN_TYPES EQU $06
+
 ENDC    ; CONSTANTS_S

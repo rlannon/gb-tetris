@@ -46,8 +46,8 @@ LoadTiles:
     call CopyData
 
     ld hl, _SCRN0
-    ld de, Tilemap
-    ld bc, TilemapEnd - Tilemap
+    ld de, GameScreen
+    ld bc, GameScreenEnd - GameScreen
     call CopyData
 
 
