@@ -6,7 +6,7 @@ SECTION "Tetromino", ROM0
 ; Copies tetromino tile data into memory
 ;
 ; Arguments:
-;   - b - the tetromino type (as offset)
+;   - b - the tetromino type (0-6)
 ;   - c - the tile pattern to use
 ;   - d - the Y coordinate of the center tile
 ;   - e - the X coordinate of the center tile

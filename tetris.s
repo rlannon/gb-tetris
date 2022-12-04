@@ -8,6 +8,8 @@ INCLUDE "tile_defs.s"
 INCLUDE "vblank.s"
 INCLUDE "joypad.s"
 
+INCLUDE "tetromino.s"
+
 SECTION "Header", ROM0[$100]
 
     jp EntryPoint
@@ -46,6 +48,13 @@ Main:
     ld a, 1
     ld [wShouldSwapColors], a
     jr .done
+
+    ld hl, _OAMRAM
+    ld b, 0
+    ld c, $27
+    ld d, $30
+    ld e, $30
+    call CreateTetromino
 .done:
     halt
     jp Main
