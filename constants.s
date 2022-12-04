@@ -28,4 +28,17 @@ DEF TETROMINO_BASE_OFFSET EQU $25
 ; Number of tetromino tile patterns
 DEF TETEROMINO_DESIGN_TYPES EQU $06
 
+; Tetromino constants -- mirrors the tetromino matrix in the file
+; These types are T J Z O S L I
+; Tetrominos are arranged in a 5x5 grid, where 00 is the center point
+; Values are 2's complement and are arranged as (Y,X) pairs
+DEF NUM_TETROMINO_TYPES EQU $07
+DEF TETROMINO_TYPE_T EQU $00
+DEF TETROMINO_TYPE_J EQU $01
+DEF TETROMINO_TYPE_Z EQU $02
+DEF TETROMINO_TYPE_O EQU $03
+DEF TETROMINO_TYPE_S EQU $04
+DEF TETROMINO_TYPE_L EQU $05
+DEF TETROMINO_TYPE_I EQU $06
+
 ENDC    ; CONSTANTS_S

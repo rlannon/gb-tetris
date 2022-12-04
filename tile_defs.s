@@ -13,10 +13,4 @@ GameScreen:
     INCBIN "game_screen.bin", 0, 1024
 GameScreenEnd:
 
-SECTION "Tetromino Map", ROM0
-
-TetrominoMap:
-    INCBIN "tetrominos.bin", 0, $A0
-TetrominoMapEnd:
-
 ENDC
