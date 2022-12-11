@@ -58,7 +58,7 @@ VBlankHandler:
     cp $12
     jr nz, .tetrominoDone
 
-    xor a, a
+    ld a, $FF
 
 .tetrominoDone:
     ld [wTetrominoNumber], a
