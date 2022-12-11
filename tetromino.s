@@ -3,6 +3,77 @@ DEF TETROMINO_S EQU 1
 
 SECTION "Tetromino", ROM0
 
+; Calculates a tile address (in VRAM/on screen)
+; Preserves af, hl
+;
+; Arguments:
+;   - d - the Y coordinate
+;   - e - the X coordinate
+;
+; Result returned in bc
+;
+CalculateTileAddress:
+    push af
+    push hl
+
+    ld bc, _SCRN0
+
+.calculateY:
+    ld hl, 0
+    ld l, d
+
+    ; Multiply Y by 32
+    scf
+    ccf
+    sla l   ; x2
+    rl h
+    sla l   ; x4
+    rl h
+    sla l   ; x8
+    rl h
+    sla l   ; x16
+    rl h
+    sla l   ; x32
+    rl h
+
+    ; Now, add HL to BC
+    ld a, l
+    adc c
+    jr nc, .addHighByteY
+    inc h
+.addHighByteY:
+    ld c, a
+    ld a, h
+    add b
+    ld b, a
+
+.calculateX:
+    ld a, c
+    adc e
+    jr nc, .saveAddress
+    inc b
+
+.saveAddress:
+    ld c, a
+
+.done:
+    pop hl
+    pop af
+    ret
+
+
+; Adjusts the coordinates based on the tetromino pattern and index
+;
+; Arguments:
+;   - b - the Y offset (twos complement)
+;   - c - the X offset (twos complement)
+;   - d - the base Y coordinate
+;   - e - the base X coordinate
+;
+AdjustCoordinates:
+    ret
+
+
 ; Copies tetromino tile data into memory
 ;
 ; Arguments:
@@ -10,21 +81,18 @@ SECTION "Tetromino", ROM0
 ;   - c - the tile pattern to use
 ;   - d - the Y coordinate of the center tile
 ;   - e - the X coordinate of the center tile
-;   - hl - the address (in OAM) of the beginning of the 16-byte block for the 4 sprites
-;
-; todo: refactor this to write to the background, rather than using sprites...
 ;
 CreateTetromino:
-    ; First, calculate the X coordinate and store it in OAM
-    ; Then, calculate the Y coordinate and store it in OAM
-    ; Then, store the pattern in OAM
-    ; Finally, store any attributes...
-    ; Do this four times
+    ; First, calculate the Y coordinate address
+    ; Then, calculate the X coordinate address
+    ; Do this four times - once for each tile in the teromino
 
-    ; First thing's first -- we need the address of the relevant matrix to
-    ; get the tetromino's coordinate positions
-    
-    ; todo: somehow preserve c so that we can store the tile...
+    ; First, preserve our tile value
+    ld a, c
+    ld [wTile], a
+
+    ; We need the address of the relevant matrix in order to get
+    ; the tetromino's coordinate positions    
 
     ; To do this, first multiply the type offset (B) by 8 (8 bytes per type)
     ld a, b
@@ -33,63 +101,50 @@ CreateTetromino:
     sla a
 
     ; Add it to the base address of the tetrominos
-    ld bc, TetrominoMatrix    
-    ccf
-    adc c
+    ; Store the result in HL
+    ld hl, TetrominoMatrix
+    adc l
     jr nc, .loopSetup
-    inc b
+    inc h
 
 .loopSetup:
+    ld l, a ; Store the addition result back in L
     ld a, 0
 
 .loop:
     push af
     push bc
-
-    ; Now, multiply our counter by 2 to get the coordinate pair's offset in the matrix
-    sla a
-
-    ; Add this to the matrix's base address
-    ccf
-    add c
-    jr nc, .fetchCoordinates
-    inc b
-
-.fetchCoordinates:
-    ; Now, get the actual coordinate difference (Y, X)
-    ; We will need some extra registers for this
     push de
-    
-    ; Save updated Y coordinate in D  
-    ld a, [bc]
-    add d
-    ld d, a
-
-    ; Save updated X coordinate in E
-    inc bc
-    ld a, [bc]
-    add e
-    ld e, a
-    dec bc
-
-    ; Save coordinates in OAM
     push hl
 
-    ld a, d
-    ld [hli], a
-    ld a, e
-    ld [hli], a
-    ld a, [Tiles + TETROMINO_BASE_OFFSET]
-    ld [hli], a
-    ld a, %11100100
-    ld [hl], a
+    ; Load BC with tetromino matrix data (Y,X)
+    ;
+    ; First, multiply A by 2 (2 bytes per tile) to get the index into the tetromino data
+    sla a   ; x2
+    ; Then, get the index at that position in HL
+    add l
+    jr nc, .finishIndex
+    inc h
+.finishIndex:
+    ; Store tile data in BC
+    ld a, [hli]
+    ld b, a
+    ld a, [hl]
+    ld c, a
 
+    ; Get adjusted coordinates in DE
+    call AdjustCoordinates
+
+    ; Get address in BC
+    call CalculateTileAddress
+
+    ; Finally, we can store the tile pattern from original C in [BC]!
+    ld a, [wTile]
+    ld [bc], a
+
+.restoreRegisters:
     pop hl
-
-    ; Restore our original X/Y coordinates
     pop de
-
-    ; Pop regs we saved at the top of the loop
     pop bc
     pop af
 

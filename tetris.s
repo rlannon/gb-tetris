@@ -48,11 +48,10 @@ Main:
     ld a, 1
     ld [wShouldSwapColors], a
 
-    ld hl, _OAMRAM
-    ld b, 0
+    ld b, 1
     ld c, $27
-    ld d, $30
-    ld e, $30
+    ld d, $0A
+    ld e, $0A
     call CreateTetromino
 .done:
     halt

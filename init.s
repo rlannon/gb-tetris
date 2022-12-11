@@ -50,6 +50,11 @@ LoadTiles:
     ld bc, GameScreenEnd - GameScreen
     call CopyData
 
+    ld hl, _VRAM8000
+    ld de, Tiles + (TETROMINO_BASE_OFFSET * 16)
+    ld bc, 128
+    call CopyData
+
 
 ; Set up our interrupts
 ; Takes no arguments
