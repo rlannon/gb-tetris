@@ -41,12 +41,35 @@ Main:
 
     ; Handle input
     ldh a, [hNewKeys]
+.handleA
     bit PADB_A, a
-    jp nz, .setColorSwap
-    jp .done
-.setColorSwap:
+    jp z, .handleB
+    
     ld a, 1
     ld [wShouldSwapColors], a
+
+.handleB
+    bit PADB_B, a
+    jp z, .done
+
+    ld a, [wTetrominoNumber]
+    inc a
+    ld [wTetrominoNumber], a
+
+    ld b, a
+    ld c, $27
+    ld d, $08
+    ld e, $08
+    call CreateTetromino
+
+    ld a, [wTetrominoNumber]
+    cp $12
+    jr nz, .handleBDone
+
+    ld a, $FF
+
+.handleBDone:
+    ld [wTetrominoNumber], a
 
 .done:
     halt

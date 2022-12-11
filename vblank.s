@@ -17,6 +17,17 @@ VBlankInterrupt:
 ; This is the actual interrupt handler
 SECTION "VBlank Hander", ROM0
 VBlankHandler:
+    call HandleColorSwap
+    call HandleShowTetromino
+
+; Clean up and return
+.done:
+    INTERRUPT_CLEAN
+    reti
+
+
+; Handles color swapping
+HandleColorSwap:
     ; Check to see if we can update the frame counter yet
     ld a, [wFrameLimit]
     ld b, a
@@ -39,34 +50,15 @@ VBlankHandler:
 
     xor a, a
     ld [wShouldSwapColors], a
+.done:
+    ret
 
-.showTetromino:
-    ld a, [wTetrominoNumber]
-    inc a
-    ld [wTetrominoNumber], a
 
-    ld b, a
-    ld c, $27
-    ld d, $08
-    ld e, $08
-    call CreateTetromino
-
+; Handles tile displays
+HandleShowTetromino:
     call ClearPreviousTetromino
     call DrawNextTetromino
-
-    ld a, [wTetrominoNumber]
-    cp $12
-    jr nz, .tetrominoDone
-
-    ld a, $FF
-
-.tetrominoDone:
-    ld [wTetrominoNumber], a
-
-; Clean up and return
-.done:
-    INTERRUPT_CLEAN
-    reti
+    ret
 
 
 ENDC
