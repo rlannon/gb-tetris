@@ -1,66 +1,9 @@
 IF !DEF(TETROMINO_S)
 DEF TETROMINO_S EQU 1
 
+INCLUDE "tiles.s"
+
 SECTION "Tetromino", ROM0
-
-; Calculates a tile address (in VRAM/on screen)
-; Preserves af, hl
-;
-; Arguments:
-;   - d - the Y coordinate
-;   - e - the X coordinate
-;
-; Result returned in bc
-;
-CalculateTileAddress:
-    push af
-    push hl
-
-    ld bc, _SCRN0
-
-.calculateY:
-    ld hl, 0
-    ld l, d
-
-    ; Multiply Y by 32
-    scf
-    ccf
-    sla l   ; x2
-    rl h
-    sla l   ; x4
-    rl h
-    sla l   ; x8
-    rl h
-    sla l   ; x16
-    rl h
-    sla l   ; x32
-    rl h
-
-    ; Now, add HL to BC
-    ld a, l
-    adc c
-    jr nc, .addHighByteY
-    inc h
-.addHighByteY:
-    ld c, a
-    ld a, h
-    add b
-    ld b, a
-
-.calculateX:
-    ld a, c
-    adc e
-    jr nc, .saveAddress
-    inc b
-
-.saveAddress:
-    ld c, a
-
-.done:
-    pop hl
-    pop af
-    ret
-
 
 ; Adjusts the coordinates based on the tetromino pattern and index
 ;
@@ -242,6 +185,41 @@ DrawNextTetromino:
     dec d
     jr nz, .loop
 
+    ret
+
+
+; Rotates the tetromino
+; If A = 0, rotates clockwise; else, rotates counterclockwise
+RotateTetromino:
+    cp 0
+    jp nz, .counter
+
+.clockwise:
+    ; todo: only allow MAX four rotations! Depends on shape!
+    ld a, [wTetrominoNumber]
+    inc a
+    ld [wTetrominoNumber], a
+
+    ld b, a
+    ld c, $27
+    ld d, $08   ; todo: variable position
+    ld e, $08
+    call CreateTetromino
+
+    ld a, [wTetrominoNumber]
+    cp $12
+    jr nz, .clockwiseDone
+
+    ld a, $FF
+
+.clockwiseDone:
+    ld [wTetrominoNumber], a
+    jp .done
+
+.counter:
+    ; todo: rotate
+
+.done:
     ret
 
 
