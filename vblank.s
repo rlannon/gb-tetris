@@ -32,7 +32,6 @@ VBlankHandler:
     cp 1
     jr z, .doSwap
     jr .done
-
 .doSwap:    
     ldh a, [rBGP]
     cpl
@@ -40,6 +39,33 @@ VBlankHandler:
 
     xor a, a
     ld [wShouldSwapColors], a
+
+.showTetromino:
+    ld a, [wTetrominoNumber]
+    ld b, a
+    ld c, $00
+    ld d, $08
+    ld e, $08
+    call CreateTetromino
+
+    ld a, [wTetrominoNumber]
+    inc a
+    ld [wTetrominoNumber], a
+
+    ld b, a
+    ld c, $27
+    ld d, $08
+    ld e, $08
+    call CreateTetromino
+
+    ld a, [wTetrominoNumber]
+    cp $13
+    jr nz, .tetrominoDone
+
+    xor a, a
+
+.tetrominoDone:
+    ld [wTetrominoNumber], a
 
 ; Clean up and return
 .done:

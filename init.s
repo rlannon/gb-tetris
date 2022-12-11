@@ -21,6 +21,8 @@ GlobalInit:
     xor a, a
     ld [wFrameCounter], a
     ld [wShouldSwapColors], a
+    ld [wTile], a
+    ld [wTetrominoNumber], a
     ldh [hCurrentKeys], a
     ldh [hNewKeys], a
 

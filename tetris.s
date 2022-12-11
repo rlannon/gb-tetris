@@ -48,11 +48,6 @@ Main:
     ld a, 1
     ld [wShouldSwapColors], a
 
-    ld b, 1
-    ld c, $27
-    ld d, $0A
-    ld e, $0A
-    call CreateTetromino
 .done:
     halt
     jp Main

@@ -70,7 +70,7 @@ CalculateTileAddress:
 ;   - d - the base Y coordinate
 ;   - e - the base X coordinate
 ;
-; Result is returned in DE
+; Final coordinates are returned in DE
 ;
 AdjustCoordinates:
     ld a, d
@@ -133,6 +133,7 @@ CreateTetromino:
     sla a   ; x2
     ; Then, get the index at that position in HL
     adc l
+    ld l, a
     jr nc, .finishIndex
     inc h
 .finishIndex:
@@ -145,10 +146,10 @@ CreateTetromino:
     ; Get adjusted coordinates in DE
     call AdjustCoordinates
 
-    ; Get address in BC
+    ; Get the address of those coordinates in BC
     call CalculateTileAddress
 
-    ; Finally, we can store the tile pattern from original C in [BC]!
+    ; Finally, we can store the tile pattern from original C in [BC]
     ld a, [wTile]
     ld [bc], a
 

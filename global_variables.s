@@ -6,6 +6,7 @@ SECTION "Variables", WRAM0
     wShouldSwapColors: db
     wFrameLimit: db
     wTile: db
+    wTetrominoNumber: db
 
 SECTION "High RAM Variables", HRAM
     hCurrentKeys: db    ; Represents the most recent key state - use when looking at controls
