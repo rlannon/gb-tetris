@@ -42,13 +42,6 @@ VBlankHandler:
 
 .showTetromino:
     ld a, [wTetrominoNumber]
-    ld b, a
-    ld c, $00
-    ld d, $08
-    ld e, $08
-    call CreateTetromino
-
-    ld a, [wTetrominoNumber]
     inc a
     ld [wTetrominoNumber], a
 
@@ -58,8 +51,11 @@ VBlankHandler:
     ld e, $08
     call CreateTetromino
 
+    call ClearPreviousTetromino
+    call DrawNextTetromino
+
     ld a, [wTetrominoNumber]
-    cp $13
+    cp $18
     jr nz, .tetrominoDone
 
     xor a, a

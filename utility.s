@@ -37,6 +37,31 @@ WaitNotVBlank:
     ret
 
 
+; Copies `d` bytes from the buffer in bc to hl
+memcpy:
+.loop:
+    ld a, [bc]
+    inc bc
+    ld [hli], a
+    
+    dec d
+    jr nz, .loop
+    
+    ret
+
+
+; Clears the tetromino whose data is stored at address HL
+; Clobbers registers
+ClearTetrominoData:
+    xor a, a
+    ld b, TETROMINO_STRUCTURE_SIZE
+.loop:
+    ld [hli], a
+    dec b
+    jr nz, .loop
+
+    ret
+
 ; A macro to turn off the LCD
 MACRO LCD_DISABLE
     ld a, 0

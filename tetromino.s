@@ -84,6 +84,24 @@ AdjustCoordinates:
     ret
 
 
+; Copies the current (next) tetromino into the old
+CopyTetromino:
+    push hl
+    push bc
+    push de
+
+    ld d, TETROMINO_STRUCTURE_SIZE
+    ld hl, wPreviousTetromino
+    ld bc, wNextTetromino
+    call memcpy
+
+    pop de
+    pop bc
+    pop hl
+
+    ret
+
+
 ; Copies tetromino tile data into memory
 ;
 ; Arguments:
@@ -93,13 +111,16 @@ AdjustCoordinates:
 ;   - e - the X coordinate of the center tile
 ;
 CreateTetromino:
+    ; First, store the current tetromino in the old
+    call CopyTetromino
+
     ; First, calculate the Y coordinate address
     ; Then, calculate the X coordinate address
     ; Do this four times - once for each tile in the teromino
 
     ; First, preserve our tile value
     ld a, c
-    ld [wTile], a
+    ld [wNextTetromino + 0], a
 
     ; We need the address of the relevant matrix in order to get
     ; the tetromino's coordinate positions    
@@ -122,10 +143,10 @@ CreateTetromino:
     ld a, 0
 
 .loop:
-    push af
     push bc
     push de
     push hl
+    push af
 
     ; Load BC with tetromino matrix data (Y,X)
     ;
@@ -149,15 +170,25 @@ CreateTetromino:
     ; Get the address of those coordinates in BC
     call CalculateTileAddress
 
-    ; Finally, we can store the tile pattern from original C in [BC]
-    ld a, [wTile]
-    ld [bc], a
+    pop af
+    push af
+    sla a
+    ld hl, wNextTetromino + 1
+    adc l
+    jr nc, .saveAddress
+    inc h
+.saveAddress:
+    ld l, a
+    ld a, c
+    ld [hli], a
+    ld a, b
+    ld [hli], a
 
 .restoreRegisters:
+    pop af
     pop hl
     pop de
     pop bc
-    pop af
 
     ; Loop comparison
     inc a
@@ -165,6 +196,52 @@ CreateTetromino:
     jp nz, .loop
 
 .done:
+    ret
+
+
+; Clears the previous tetromino from memory
+; NB: Only call in VBlank!
+;
+; Iterates through the addresses listed in the structure,
+; writing zero to each of them
+;
+ClearPreviousTetromino:
+    ld hl, wPreviousTetromino + 1
+    ld d, TETROMINO_STRUCTURE_SIZE - 1
+
+.loop:
+    ld a, [hli]
+    ld c, a
+    ld a, [hli]
+    ld b, a
+    
+    xor a, a
+    ld [bc], a
+
+    dec d
+    jr nz, .loop
+
+    ret
+
+
+; Draws wNextTetromino to the screen
+; NB: Only call in VBlank!
+DrawNextTetromino:
+    ld hl, wNextTetromino + 1
+    ld d, TETROMINO_STRUCTURE_SIZE - 1
+
+.loop:
+    ld a, [hli]
+    ld c, a
+    ld a, [hli]
+    ld b, a
+
+    ld a, [wNextTetromino]
+    ld [bc], a
+
+    dec d
+    jr nz, .loop
+
     ret
 
 

@@ -26,6 +26,12 @@ GlobalInit:
     ldh [hCurrentKeys], a
     ldh [hNewKeys], a
 
+    ld hl, wPreviousTetromino
+    call ClearTetrominoData
+
+    ld hl, wNextTetromino
+    call ClearTetrominoData
+
     ld a, 15
     ld [wFrameLimit], a
 
