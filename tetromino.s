@@ -70,7 +70,17 @@ CalculateTileAddress:
 ;   - d - the base Y coordinate
 ;   - e - the base X coordinate
 ;
+; Result is returned in DE
+;
 AdjustCoordinates:
+    ld a, d
+    add b
+    ld d, a
+
+    ld a, e
+    add c
+    ld e, a
+
     ret
 
 
@@ -122,7 +132,7 @@ CreateTetromino:
     ; First, multiply A by 2 (2 bytes per tile) to get the index into the tetromino data
     sla a   ; x2
     ; Then, get the index at that position in HL
-    add l
+    adc l
     jr nc, .finishIndex
     inc h
 .finishIndex:

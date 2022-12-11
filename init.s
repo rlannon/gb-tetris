@@ -49,12 +49,8 @@ LoadTiles:
     ld de, GameScreen
     ld bc, GameScreenEnd - GameScreen
     call CopyData
-
-    ld hl, _VRAM8000
-    ld de, Tiles + (TETROMINO_BASE_OFFSET * 16)
-    ld bc, 128
-    call CopyData
-
+    
+    ret
 
 ; Set up our interrupts
 ; Takes no arguments
@@ -80,15 +76,6 @@ InitOAM:
     ld [hli], a
     dec b
     jp nz, .loop
-.writeProperties:
-    ld hl, _OAMRAM
-    ld a, 128 + 16
-    ld [hli], a
-    ld a, 16 + 8
-    ld [hli], a
-    xor a, a
-    ld [hli], a
-    ld [hl], a
     
     ret
 

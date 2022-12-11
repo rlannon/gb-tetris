@@ -27,10 +27,6 @@ VBlankHandler:
     xor a, a
     ld [wFrameCounter], a
 
-    ld a, [_OAMRAM + 1]
-    inc a
-    ld [_OAMRAM + 1], a
-
 .colorSwap:
     ld a, [wShouldSwapColors]
     cp 1
