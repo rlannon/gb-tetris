@@ -55,7 +55,7 @@ VBlankHandler:
     call DrawNextTetromino
 
     ld a, [wTetrominoNumber]
-    cp $18
+    cp $12
     jr nz, .tetrominoDone
 
     xor a, a
